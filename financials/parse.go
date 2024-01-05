@@ -86,7 +86,7 @@ func ParseXBRL(fn string) (*Statement, error) {
 			case "CashAndCashEquivalentsAtCarryingValue":
 				factContext := processed.ContextsByID[fact.ContextRef]
 				if *factContext.Period.Instant == endDate {
-					statement.BalanceSheet.CurrentLoansReceivable, err = fact.NumericValue()
+					statement.BalanceSheet.CashAndEquiv, err = fact.NumericValue()
 					if err != nil {
 						log.Error().Err(err).Msg("error parsing current loans receivable numeric value")
 						return nil, err
@@ -95,7 +95,7 @@ func ParseXBRL(fn string) (*Statement, error) {
 			case "InvestmentsInAffiliatesSubsidiariesAssociatesAndJointVentures":
 				factContext := processed.ContextsByID[fact.ContextRef]
 				if *factContext.Period.Instant == endDate {
-					statement.BalanceSheet.CashAndEquiv, err = fact.NumericValue()
+					statement.BalanceSheet.CurrentLoansReceivable, err = fact.NumericValue()
 					if err != nil {
 						log.Error().Err(err).Msg("error parsing cash and equivalents numeric value")
 						return nil, err
@@ -124,7 +124,34 @@ func ParseXBRL(fn string) (*Statement, error) {
 				if *factContext.Period.Instant == endDate {
 					statement.BalanceSheet.ReceivablesFromOther, err = fact.NumericValue()
 					if err != nil {
-						log.Error().Err(err).Msg("error parsing receivables from customers numeric value")
+						log.Error().Err(err).Msg("error parsing fees interest and other numeric value")
+						return nil, err
+					}
+				}
+			case "FinancialInstrumentsOwnedAtFairValue":
+				factContext := processed.ContextsByID[fact.ContextRef]
+				if *factContext.Period.Instant == endDate {
+					statement.BalanceSheet.FinancialInstrumentsOwnedAtFairValue, err = fact.NumericValue()
+					if err != nil {
+						log.Error().Err(err).Msg("error parsing financial instruments owned at fair value numeric value")
+						return nil, err
+					}
+				}
+			case "CashAndSecuritiesSegregatedUnderFederalAndOtherRegulations":
+				factContext := processed.ContextsByID[fact.ContextRef]
+				if *factContext.Period.Instant == endDate {
+					statement.BalanceSheet.SegregatedCash, err = fact.NumericValue()
+					if err != nil {
+						log.Error().Err(err).Msg("error parsing financial instruments owned at fair value numeric value")
+						return nil, err
+					}
+				}
+			case "SecuritiesReceivedAsCollateral":
+				factContext := processed.ContextsByID[fact.ContextRef]
+				if *factContext.Period.Instant == endDate {
+					statement.BalanceSheet.SecuritiesReceivedAsCollateral, err = fact.NumericValue()
+					if err != nil {
+						log.Error().Err(err).Msg("error parsing financial instruments owned at fair value numeric value")
 						return nil, err
 					}
 				}
@@ -137,7 +164,10 @@ func ParseXBRL(fn string) (*Statement, error) {
 			statement.BalanceSheet.CurrentLoansReceivable +
 			statement.BalanceSheet.ReceivablesFromBrokers +
 			statement.BalanceSheet.ReceivablesFromCustomers +
-			statement.BalanceSheet.ReceivablesFromOther)
+			statement.BalanceSheet.ReceivablesFromOther +
+			statement.BalanceSheet.FinancialInstrumentsOwnedAtFairValue +
+			statement.BalanceSheet.SegregatedCash +
+			statement.BalanceSheet.SecuritiesReceivedAsCollateral)
 	}
 
 	if statement.BalanceSheet.CurrentLiabilities == 0 {

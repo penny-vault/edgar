@@ -92,13 +92,16 @@ type BalanceSheet struct {
 	TaxAssets      float64
 	TaxLiabilities float64
 
-	CurrentLoansReceivable   float64
-	ReceivablesFromBrokers   float64
-	ReceivablesFromCustomers float64
-	ReceivablesFromOther     float64
-	TotalReceivables         float64
-	TotalPayables            float64
-	Intangibles              float64
+	CurrentLoansReceivable               float64
+	ReceivablesFromBrokers               float64
+	ReceivablesFromCustomers             float64
+	ReceivablesFromOther                 float64
+	FinancialInstrumentsOwnedAtFairValue float64
+	TotalReceivables                     float64
+	TotalPayables                        float64
+	Intangibles                          float64
+	SegregatedCash                       float64
+	SecuritiesReceivedAsCollateral       float64
 
 	Equity                              float64
 	RetainedEarnings                    float64
