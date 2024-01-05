@@ -16,11 +16,10 @@
 package cmd
 
 import (
-	"encoding/xml"
 	"fmt"
 	"os"
 
-	"github.com/polygon-io/xbrl-parser"
+	"github.com/penny-vault/edgar/financials"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -38,29 +37,12 @@ var rootCmd = &cobra.Command{
 
 		// get a list of filings by CIK
 		// https://data.sec.gov/submissions/CIK0000096223.json
-
-		var processed xbrl.XBRL
-		doc, err := os.ReadFile(args[0])
+		statement, err := financials.ParseXBRL(args[0])
 		if err != nil {
-			log.Error().Err(err).Msg("read file failed")
+			log.Fatal().Err(err).Str("fn", args[0]).Msg("could not parse XBRL from file")
 		}
 
-		if err := xml.Unmarshal([]byte(doc), &processed); err != nil {
-			log.Error().Err(err).Msg("unmarshal failed")
-		}
-
-		log.Info().Int("NumFacts", len(processed.Facts)).Msg("Parsed XBRL")
-		for _, fact := range processed.Facts {
-			factType := fact.Type()
-			/*
-				numericValue, err := fact.NumericValue()
-
-				factContext := processed.ContextsByID[fact.ContextRef]
-				factUnit := processed.UnitsByID[*fact.UnitRef]
-			*/
-
-			log.Info().Bool("Valid", fact.IsValid()).Str("Name", fmt.Sprintf("%s:%s", fact.XMLName.Space, fact.XMLName.Local)).Str("Type", string(factType)).Msg("Fact")
-		}
+		fmt.Println(statement)
 	},
 }
 
